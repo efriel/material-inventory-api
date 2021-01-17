@@ -11,6 +11,7 @@ var jwtSecretKey = []byte("jwt_secret_key_rumeh")
 func CreateJWT(name string, email string) (response string, err error) {
 	expirationTime := time.Now().Add(10 * time.Minute)
 	claims := &Claims{
+		Name:  name,
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
