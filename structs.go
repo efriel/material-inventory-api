@@ -14,7 +14,6 @@ type SuccessResponse struct {
 }
 
 type Claims struct {
-	Name  string
 	Email string
 	jwt.StandardClaims
 }
