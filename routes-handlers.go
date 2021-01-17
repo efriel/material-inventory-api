@@ -72,7 +72,7 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 					errorResponse.Message = "Password not match"
 					returnErrorResponse(response, request, errorResponse)
 				} else {
-					tokenString, _ := CreateJWT(result.User_id, result.Name, loginRequest.Email)
+					tokenString, _ := CreateJWT(result.Name, loginRequest.Email)
 
 					if tokenString == "" {
 						returnErrorResponse(response, request, errorResponse)
@@ -85,7 +85,6 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 							AuthToken: tokenString,
 							Email:     loginRequest.Email,
 							Name:      result.Name,
-							User_id:   result.User_id,
 						},
 					}
 
@@ -141,7 +140,6 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 				AuthToken: tokenString,
 				Email:     registrationRequest.Email,
 				Name:      registrationRequest.Name,
-				User_id:   ntsec,
 			}
 
 			collection := Client.Database("msdb").Collection("users")
