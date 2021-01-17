@@ -130,7 +130,7 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 			tsec := tnow.Unix()
 			ntsec := strconv.FormatInt(tsec, 10)
 
-			tokenString, _ := CreateJWT(ntsec, registrationRequest.Name, registrationRequest.Email)
+			tokenString, _ := CreateJWT(registrationRequest.Name, registrationRequest.Email)
 
 			if tokenString == "" {
 				returnErrorResponse(response, request, errorResponse)
