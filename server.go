@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -13,6 +12,6 @@ func main() {
 	ConnectDatabase()
 	route := mux.NewRouter()
 	AddApproutes(route)
-	//log.Fatal(http.ListenAndServe(":9000", route))
-	log.Fatal(http.ListenAndServe(":9000", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(route)))
+	log.Fatal(http.ListenAndServe(":9000", route))
+	//log.Fatal(http.ListenAndServe(":9000", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(route)))
 }
