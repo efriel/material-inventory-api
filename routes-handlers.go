@@ -53,7 +53,7 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 
 			collection := Client.Database("msdb").Collection("users")
 
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			var err = collection.FindOne(ctx, bson.M{
 				"email": loginRequest.Email,
 			}).Decode(&result)
@@ -143,7 +143,7 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 			}
 
 			collection := Client.Database("msdb").Collection("users")
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			_, databaseErr := collection.InsertOne(ctx, bson.M{
 				"user_id":  ntsec,
 				"email":    registrationRequest.Email,
