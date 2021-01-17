@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -116,7 +117,7 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 			_, databaseErr := collection.InsertOne(ctx, bson.M{
 				"user_id":  tsec,
 				"email":    registrationRequest.Email,
-				"password": registrationRequest.Password,
+				"password": getHash([]byte(registrationRequest.Password)),
 				"name":     registrationRequest.Name,
 			})
 			defer cancel()
@@ -197,4 +198,12 @@ func returnErrorResponse(response http.ResponseWriter, request *http.Request, er
 
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
+func getHash(pwd []byte) string {
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
+	if err != nil {
+		log.Println(err)
+	}
+	return string(hash)
 }
