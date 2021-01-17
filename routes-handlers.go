@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -12,21 +13,35 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func RenderHome(response http.ResponseWriter, request *http.Request) {
+	http.ServeFile(response, request, "views/profile.html")
+}
+
+func RenderLogin(response http.ResponseWriter, request *http.Request) {
+	http.ServeFile(response, request, "views/login.html")
+}
+
+func RenderRegister(response http.ResponseWriter, request *http.Request) {
+	http.ServeFile(response, request, "views/register.html")
+}
+
 func SignInUser(response http.ResponseWriter, request *http.Request) {
 	var loginRequest LoginParams
 	var result UserDetails
 	var errorResponse = ErrorResponse{
-		Code: http.StatusInternalServerError, Message: "Internal server error.",
+		Code: http.StatusInternalServerError, Message: "Internal Server Error.",
 	}
 
 	decoder := json.NewDecoder(request.Body)
 	decoderErr := decoder.Decode(&loginRequest)
+
 	defer request.Body.Close()
 
 	if decoderErr != nil {
 		returnErrorResponse(response, request, errorResponse)
 	} else {
 		errorResponse.Code = http.StatusBadRequest
+
 		if loginRequest.Email == "" {
 			errorResponse.Message = "Email can't be empty"
 			returnErrorResponse(response, request, errorResponse)
@@ -39,37 +54,46 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			var err = collection.FindOne(ctx, bson.M{
-				"email":    loginRequest.Email,
-				"password": loginRequest.Password,
+				"email": loginRequest.Email,
 			}).Decode(&result)
+			if err != nil {
+				errorResponse.Message = "User not found"
+				returnErrorResponse(response, request, errorResponse)
+			}
 
 			defer cancel()
 
 			if err != nil {
 				returnErrorResponse(response, request, errorResponse)
 			} else {
-				tokenString, _ := CreateJWT(loginRequest.Email)
-
-				if tokenString == "" {
+				pwdmatch := CheckPasswordHash(loginRequest.Password, result.Password)
+				if pwdmatch != true {
+					errorResponse.Message = "Password not match"
 					returnErrorResponse(response, request, errorResponse)
-				}
+				} else {
+					tokenString, _ := CreateJWT(loginRequest.Email)
 
-				var successResponse = SuccessResponse{
-					Code:    http.StatusOK,
-					Message: "Successfully registered, please login again",
-					Response: SuccessfulLoginResponse{
-						AuthToken: tokenString,
-						Email:     loginRequest.Email,
-					},
-				}
+					if tokenString == "" {
+						returnErrorResponse(response, request, errorResponse)
+					}
 
-				successJSONResponse, jsonError := json.Marshal(successResponse)
+					var successResponse = SuccessResponse{
+						Code:    http.StatusOK,
+						Message: "You are registered, login again",
+						Response: SuccessfulLoginResponse{
+							AuthToken: tokenString,
+							Email:     loginRequest.Email,
+						},
+					}
 
-				if jsonError != nil {
-					returnErrorResponse(response, request, errorResponse)
+					successJSONResponse, jsonError := json.Marshal(successResponse)
+
+					if jsonError != nil {
+						returnErrorResponse(response, request, errorResponse)
+					}
+					response.Header().Set("Content-Type", "application/json")
+					response.Write(successJSONResponse)
 				}
-				response.Header().Set("Content-Type", "application/json")
-				response.Write(successJSONResponse)
 			}
 		}
 	}
@@ -89,6 +113,7 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 		returnErrorResponse(response, request, errorResponse)
 	} else {
 		errorResponse.Code = http.StatusBadRequest
+		fmt.Printf(registrationRequest.Email)
 		if registrationRequest.Name == "" {
 			errorResponse.Message = "Name can't be empty"
 			returnErrorResponse(response, request, errorResponse)
@@ -207,4 +232,9 @@ func getHash(pwd []byte) string {
 		log.Println(err)
 	}
 	return string(hash)
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
