@@ -11,5 +11,8 @@ func AddApproutes(route *mux.Router) {
 	route.HandleFunc("/signin", SignInUser).Methods("POST")
 	route.HandleFunc("/signup", SignUpUser).Methods("POST")
 	route.HandleFunc("/userDetails", GetUserDetails).Methods("GET")
+	route.HandleFunc("/api/signin", SignInUser).Methods("POST")
+	route.HandleFunc("/api/signup", SignUpUser).Methods("POST")
+	route.HandleFunc("/api/userDetails", GetUserDetails).Methods("GET")
 	log.Println("Routes are Loaded.")
 }
