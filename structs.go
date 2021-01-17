@@ -24,6 +24,11 @@ type RegistrationParams struct {
 	Password string `json:"password"`
 }
 
+type LoginParamsnp struct {
+	Email    string
+	Password string
+}
+
 type LoginParams struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
