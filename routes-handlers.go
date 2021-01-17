@@ -84,6 +84,8 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 						Response: SuccessfulLoginResponse{
 							AuthToken: tokenString,
 							Email:     loginRequest.Email,
+							Name:      result.Name,
+							User_id:   result.User_id,
 						},
 					}
 
@@ -138,6 +140,8 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 			var registrationResponse = SuccessfulLoginResponse{
 				AuthToken: tokenString,
 				Email:     registrationRequest.Email,
+				Name:      registrationRequest.Name,
+				User_id:   ntsec,
 			}
 
 			collection := Client.Database("msdb").Collection("users")

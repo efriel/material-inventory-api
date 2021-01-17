@@ -32,6 +32,8 @@ type LoginParams struct {
 }
 
 type SuccessfulLoginResponse struct {
+	User_id   string
+	Name      string
 	Email     string
 	AuthToken string
 }
