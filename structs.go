@@ -35,6 +35,7 @@ type SuccessfulLoginResponse struct {
 }
 
 type UserDetails struct {
+	User_id  string
 	Name     string
 	Email    string
 	Password string

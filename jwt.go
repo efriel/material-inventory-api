@@ -8,9 +8,11 @@ import (
  
 var jwtSecretKey = []byte("jwt_secret_key_rumeh")
  
-func CreateJWT(email string) (response string, err error) {
-    expirationTime := time.Now().Add(5 * time.Minute)
+func CreateJWT(user_id string, name string, email string) (response string, err error) {
+    expirationTime := time.Now().Add(10 * time.Minute)
     claims := &Claims{
+        User_id: user_id,
+        Name: name,
         Email: email,
         StandardClaims: jwt.StandardClaims{
             ExpiresAt: expirationTime.Unix(),

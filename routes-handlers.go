@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -71,7 +72,7 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 					errorResponse.Message = "Password not match"
 					returnErrorResponse(response, request, errorResponse)
 				} else {
-					tokenString, _ := CreateJWT(loginRequest.Email)
+					tokenString, _ := CreateJWT(result.User_id, result.Name, loginRequest.Email)
 
 					if tokenString == "" {
 						returnErrorResponse(response, request, errorResponse)
@@ -124,7 +125,11 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 			errorResponse.Message = "Password can't be empty"
 			returnErrorResponse(response, request, errorResponse)
 		} else {
-			tokenString, _ := CreateJWT(registrationRequest.Email)
+			tnow := time.Now()
+			tsec := tnow.Unix()
+			ntsec := strconv.FormatInt(tsec, 10)
+
+			tokenString, _ := CreateJWT(ntsec, registrationRequest.Name, registrationRequest.Email)
 
 			if tokenString == "" {
 				returnErrorResponse(response, request, errorResponse)
@@ -135,13 +140,10 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 				Email:     registrationRequest.Email,
 			}
 
-			tnow := time.Now()
-			tsec := tnow.Unix()
-
 			collection := Client.Database("msdb").Collection("users")
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			_, databaseErr := collection.InsertOne(ctx, bson.M{
-				"user_id":  tsec,
+				"user_id":  ntsec,
 				"email":    registrationRequest.Email,
 				"password": getHash([]byte(registrationRequest.Password)),
 				"name":     registrationRequest.Name,
