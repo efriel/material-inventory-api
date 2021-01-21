@@ -14,18 +14,22 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+//RenderHome to render profile page if needed
 func RenderHome(response http.ResponseWriter, request *http.Request) {
 	http.ServeFile(response, request, "views/profile.html")
 }
 
+//RenderLogin to render login page if needed
 func RenderLogin(response http.ResponseWriter, request *http.Request) {
 	http.ServeFile(response, request, "views/login.html")
 }
 
+//RenderRegister to render register page if needed
 func RenderRegister(response http.ResponseWriter, request *http.Request) {
 	http.ServeFile(response, request, "views/register.html")
 }
 
+//SignInUser to accept request from user login
 func SignInUser(response http.ResponseWriter, request *http.Request) {
 	var loginRequest LoginParams
 	var result UserDetails
@@ -101,6 +105,7 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
+//SignUpUser to accept request from user signup
 func SignUpUser(response http.ResponseWriter, request *http.Request) {
 	var registrationRequest RegistrationParams
 	var errorResponse = ErrorResponse{
@@ -174,6 +179,7 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
+//GetUserDetails to accept request for user detail
 func GetUserDetails(response http.ResponseWriter, request *http.Request) {
 	var result UserDetails
 	var errorResponse = ErrorResponse{
@@ -238,6 +244,7 @@ func getHash(pwd []byte) string {
 	return string(hash)
 }
 
+//CheckPasswordHash to compare the password given
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil

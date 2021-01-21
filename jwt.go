@@ -8,6 +8,7 @@ import (
 
 var jwtSecretKey = []byte("jwt_secret_key_rumeh")
 
+//CreateJWT to generate Token with payload name and email
 func CreateJWT(name string, email string) (response string, err error) {
 	expirationTime := time.Now().Add(10 * time.Minute)
 	claims := &Claims{
@@ -26,6 +27,7 @@ func CreateJWT(name string, email string) (response string, err error) {
 	return "", err
 }
 
+// VerifyToken to Verify the accepted token from http request
 func VerifyToken(tokenString string) (email string, err error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
