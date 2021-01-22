@@ -20,5 +20,10 @@ func AddApproutes(route *mux.Router) {
 	route.HandleFunc("/api/master/part", CreateMasterPart).Methods("POST")
 	route.HandleFunc("/api/master/part/{part_id}", RemoveMasterPart).Methods("DELETE")
 	route.HandleFunc("/api/master/part/{part_id}", UpdateMasterPart).Methods("PUT")
+	route.HandleFunc("/api/combo/supplier", GetMasterSupplier).Methods("GET")
+	route.HandleFunc("/api/combo/site", GetMasterSite).Methods("GET")
+	route.HandleFunc("/api/combo/warehouse", GetMasterWarehouse).Methods("GET")
+	route.HandleFunc("/api/combo/category", GetCategory).Methods("GET")
+	route.HandleFunc("/api/combo/docs", GetDocs).Methods("GET")
 	log.Println("Routes are Loaded.")
 }

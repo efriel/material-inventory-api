@@ -10,7 +10,7 @@ var jwtSecretKey = []byte("jwt_secret_key_rumeh")
 
 //CreateJWT to generate Token with payload name and email
 func CreateJWT(name string, email string) (response string, err error) {
-	expirationTime := time.Now().Add(10 * time.Minute)
+	expirationTime := time.Now().Add(100 * time.Minute)
 	claims := &Claims{
 		Name:  name,
 		Email: email,

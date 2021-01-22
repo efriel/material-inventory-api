@@ -13,16 +13,119 @@ import (
 
 //GetMasterPart to get list of master part data documents
 func GetMasterPart(response http.ResponseWriter, request *http.Request) {
-	//var result MasterPart
+	//var MasterPart MasterPart
+	//var AgregateMasterPart AgregateMasterPart
 	var errorResponse = ErrorResponse{
 		Code: http.StatusInternalServerError, Message: "Internal Server Error.",
 	}
 
 	collection := Client.Database("msdb").Collection("t_mst_part")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	cursor, err := collection.Find(context.TODO(), bson.M{})
-	var results []bson.M
-	err = cursor.All(ctx, &results)
+	//cursor, err := collection.Find(context.TODO(), bson.M{})
+	//var results []bson.M
+	//var NumberInt = require('mongoose-int32');
+	o1 := bson.M{
+		"$project": bson.M{"_id": 0, "part": "$$ROOT"},
+	}
+
+	o2 := bson.M{
+		"$lookup": bson.M{"localField": "part.mg_cat_id",
+			"from":         "t_cat_mg",
+			"foreignField": "mg_cat_id",
+			"as":           "category",
+		},
+	}
+
+	o3 := bson.M{
+		"$unwind": bson.M{
+			"path":                       "$category",
+			"preserveNullAndEmptyArrays": false,
+		},
+	}
+
+	o4 := bson.M{
+		"$lookup": bson.M{
+			"localField":   "part.supplier_id",
+			"from":         "t_mst_supplier",
+			"foreignField": "supplier_id",
+			"as":           "supplier",
+		},
+	}
+
+	o5 := bson.M{
+		"$unwind": bson.M{
+			"path":                       "$supplier",
+			"preserveNullAndEmptyArrays": false,
+		},
+	}
+
+	o6 := bson.M{
+		"$lookup": bson.M{
+			"localField":   "part.site_id",
+			"from":         "t_mst_site",
+			"foreignField": "site_id",
+			"as":           "site",
+		},
+	}
+
+	o7 := bson.M{
+		"$unwind": bson.M{
+			"path":                       "$site",
+			"preserveNullAndEmptyArrays": false,
+		},
+	}
+
+	o8 := bson.M{
+		"$lookup": bson.M{
+			"localField":   "part.user_id",
+			"from":         "users",
+			"foreignField": "user_id",
+			"as":           "user",
+		},
+	}
+
+	o9 := bson.M{
+		"$unwind": bson.M{
+			"path":                       "$user",
+			"preserveNullAndEmptyArrays": false,
+		},
+	}
+
+	o10 := bson.M{
+		"$project": bson.M{
+			"part.part_id":           "$part.part_id",
+			"part.mg_cat_id":         "$part.mg_cat_id",
+			"category.mg_cat_name":   "$category.mg_cat_name",
+			"part.part_code":         "$part.part_code",
+			"part.part_name":         "$part.part_name",
+			"part.part_unit":         "$part.part_unit",
+			"part.supplier_id":       "$part.supplier_id",
+			"supplier.supplier_name": "$supplier.supplier_name",
+			"part.min_stock":         "$part.min_stock",
+			"part.cost_price":        "$part.cost_price",
+			"part.expired_date":      "$part.expired_date",
+			"part.site_id":           "$part.site_id",
+			"site.site_name":         "$site.site_name",
+			"part.part_notes":        "$part.part_notes",
+			"part.user_id":           "$part.user_id",
+			"user.name":              "$user.name",
+			"part.insert_date":       "$part.insert_date",
+			"part.update_date":       "$part.update_date",
+		},
+	}
+
+	pipeline := bson.A{o1, o2, o3, o4, o5, o6, o7, o8, o9, o10}
+
+	//pipe := mongo.Pipeline([]bson.A{o1, o2, o3, o4, o5, o6, o7, o8, o9, o10})
+	showInfoCursor, err := collection.Aggregate(ctx, pipeline)
+	results := []bson.M{}
+	//results := AgregateMasterPart
+	//err := pipe.One(&results)
+	if err = showInfoCursor.All(ctx, &results); err != nil {
+		panic(err)
+	}
+
+	//err = cursor.All(ctx, &results)
 
 	defer cancel()
 

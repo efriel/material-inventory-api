@@ -55,20 +55,46 @@ type UserDetails struct {
 
 //MasterPart a structure for Master Part Table
 type MasterPart struct {
-	Partid      string    `json:"part_id" bson:"part_id"`
-	Mgcatid     string    `json:"mg_cat_id" bson:"mg_cat_id"`
-	Partcode    string    `json:"part_code" bson:"part_code"`
-	Partname    string    `json:"part_name" bson:"part_name"`
-	Partunit    string    `json:"part_unit" bson:"part_unit"`
-	Supplierid  string    `json:"supplier_id" bson:"supplier_id"`
-	Minstock    string    `json:"min_stock" bson:"min_stock"`
-	Costprice   string    `json:"cost_price" bson:"cost_price"`
-	Expireddate string    `json:"expired_date" bson:"expired_date"`
-	Siteid      string    `json:"site_id" bson:"site_id"`
-	Partnotes   string    `json:"part_notes" bson:"part_notes"`
-	Userid      int       `json:"user_id" bson:"user_id"`
-	Insertdate  time.Time `json:"insert_date" bson:"insert_date"`
-	Updatedate  time.Time `json:"update_date" bson:"update_date"`
+	Partid       string    `json:"part_id" bson:"part_id"`
+	Mgcatid      string    `json:"mg_cat_id" bson:"mg_cat_id"`
+	Mgcatname    string    `json:"mg_cat_name" bson:"mg_cat_name"`
+	Partcode     string    `json:"part_code" bson:"part_code"`
+	Partname     string    `json:"part_name" bson:"part_name"`
+	Partunit     string    `json:"part_unit" bson:"part_unit"`
+	Supplierid   string    `json:"supplier_id" bson:"supplier_id"`
+	Suppliername string    `json:"supplier_name" bson:"supplier_name"`
+	Minstock     string    `json:"min_stock" bson:"min_stock"`
+	Costprice    string    `json:"cost_price" bson:"cost_price"`
+	Expireddate  string    `json:"expired_date" bson:"expired_date"`
+	Siteid       string    `json:"site_id" bson:"site_id"`
+	Sitename     string    `json:"site_name" bson:"site_name"`
+	Partnotes    string    `json:"part_notes" bson:"part_notes"`
+	Userid       int       `json:"user_id" bson:"user_id"`
+	Username     string    `json:"name" bson:"name"`
+	Insertdate   time.Time `json:"insert_date" bson:"insert_date"`
+	Updatedate   time.Time `json:"update_date" bson:"update_date"`
+}
+
+//AgregateMasterPart Pipeline from agregation data master part
+type AgregateMasterPart struct {
+	Partid       string    `json:"part.part_id" bson:"part.part_id"`
+	Mgcatid      string    `json:"part.mg_cat_id" bson:"part.mg_cat_id"`
+	Mgcatname    string    `json:"category.mg_cat_name" bson:"category.mg_cat_name"`
+	Partcode     string    `json:"part.part_code" bson:"part.part_code"`
+	Partname     string    `json:"part_name" bson:"part_name"`
+	Partunit     string    `json:"part_unit" bson:"part_unit"`
+	Supplierid   string    `json:"supplier_id" bson:"supplier_id"`
+	Suppliername string    `json:"supplier_name" bson:"supplier_name"`
+	Minstock     string    `json:"min_stock" bson:"min_stock"`
+	Costprice    string    `json:"cost_price" bson:"cost_price"`
+	Expireddate  string    `json:"expired_date" bson:"expired_date"`
+	Siteid       string    `json:"site_id" bson:"site_id"`
+	Sitename     string    `json:"site_name" bson:"site_name"`
+	Partnotes    string    `json:"part_notes" bson:"part_notes"`
+	Userid       int       `json:"user_id" bson:"user_id"`
+	Username     string    `json:"name" bson:"name"`
+	Insertdate   time.Time `json:"insert_date" bson:"insert_date"`
+	Updatedate   time.Time `json:"update_date" bson:"update_date"`
 }
 
 //MstFg a structure for Master Finished Goods Table
@@ -98,6 +124,37 @@ type MstSupplier struct {
 	Supplieraddr  string `json:"supplier_addr" bson:"supplier_addr"`
 	Supplieremail string `json:"supplier_email" bson:"supplier_email"`
 	Supplierphone string `json:"supplier_phone" bson:"supplier_phone"`
+}
+
+//MstSite is a structure for Master Site
+type MstSite struct {
+	Siteid   string `json:"site_id" bson:"site_id"`
+	Sitename string `json:"site_name" bson:"site_name"`
+	Siteaddr string `json:"site_addr" bson:"site_addr"`
+	Sitelong string `json:"site_long" bson:"site_long"`
+	Sitelat  string `json:"site_lat" bson:"site_lat"`
+}
+
+//MstWarehouse is a structure for Master Warehouse
+type MstWarehouse struct {
+	Warehouseid   string `json:"wh_id" bson:"wh_id"`
+	Warehousename string `json:"wh_name" bson:"wh_name"`
+}
+
+//TCategory is a structure for table category
+type TCategory struct {
+	Mgcatid   string `json:"mg_cat_id" bson:"mg_cat_id"`
+	Mgcatname string `json:"mg_cat_name" bson:"mg_cat_name"`
+}
+
+//TDoc is a structure for Table Doc
+type TDoc struct {
+	Docnumber  int       `json:"doc_number" bson:"doc_number"`
+	Doccatid   int       `json:"doc_cat_id" bson:"doc_cat_id"`
+	Filename   string    `json:"file_name" bson:"file_name"`
+	Userid     string    `json:"user_id" bson:"user_id"`
+	Insertdate time.Time `json:"insert_date" bson:"insert_date"`
+	Updatedate time.Time `json:"update_date" bson:"update_date"`
 }
 
 //TPurchase is a structure for Table Purchase
@@ -145,16 +202,6 @@ type TStock struct {
 	Mgid       string    `json:"mg_id" bson:"mg_id"`
 	Quantity   int       `json:"quantity" bson:"quantity"`
 	Insertdate time.Time `json:"insertdate" bson:"insert_date"`
-	Updatedate time.Time `json:"update_date" bson:"update_date"`
-}
-
-//TDoc is a structure for Table Doc
-type TDoc struct {
-	Docnumber  int       `json:"doc_number" bson:"doc_number"`
-	Doccatid   int       `json:"doc_cat_id" bson:"doc_cat_id"`
-	Filename   string    `json:"file_name" bson:"file_name"`
-	Userid     string    `json:"user_id" bson:"user_id"`
-	Insertdate time.Time `json:"insert_date" bson:"insert_date"`
 	Updatedate time.Time `json:"update_date" bson:"update_date"`
 }
 
