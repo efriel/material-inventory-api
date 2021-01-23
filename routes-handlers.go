@@ -76,7 +76,7 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 					errorResponse.Message = "Password not match"
 					returnErrorResponse(response, request, errorResponse)
 				} else {
-					tokenString, _ := CreateJWT(result.Name, loginRequest.Email)
+					tokenString, _ := CreateJWT(result.Name, loginRequest.Email, result.Userid)
 
 					if tokenString == "" {
 						returnErrorResponse(response, request, errorResponse)
@@ -89,6 +89,7 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 							AuthToken: tokenString,
 							Email:     loginRequest.Email,
 							Name:      result.Name,
+							Userid:    result.Userid,
 						},
 					}
 
@@ -134,8 +135,9 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 			tnow := time.Now()
 			tsec := tnow.Unix()
 			ntsec := strconv.FormatInt(tsec, 10)
+			ntsecint, _ := strconv.Atoi(ntsec)
 
-			tokenString, _ := CreateJWT(registrationRequest.Name, registrationRequest.Email)
+			tokenString, _ := CreateJWT(registrationRequest.Name, registrationRequest.Email, ntsecint)
 
 			if tokenString == "" {
 				returnErrorResponse(response, request, errorResponse)
@@ -198,7 +200,8 @@ func GetUserDetails(response http.ResponseWriter, request *http.Request) {
 		var err = collection.FindOne(ctx, bson.M{
 			"email": email,
 		}).Decode(&result)
-
+		//result := []bson.M{}
+		fmt.Printf("%v\n", result)
 		defer cancel()
 
 		if err != nil {
@@ -207,7 +210,7 @@ func GetUserDetails(response http.ResponseWriter, request *http.Request) {
 			var successResponse = SuccessResponse{
 				Code:     http.StatusOK,
 				Message:  "Successfully logged in ",
-				Response: result.Name,
+				Response: result,
 			}
 
 			successJSONResponse, jsonError := json.Marshal(successResponse)
@@ -218,6 +221,52 @@ func GetUserDetails(response http.ResponseWriter, request *http.Request) {
 			response.Header().Set("Content-Type", "application/json")
 			response.Write(successJSONResponse)
 		}
+	}
+}
+
+//GetCompleteUserDetails to accept request for user detail
+func GetCompleteUserDetails(response http.ResponseWriter, request *http.Request) {
+	var results CompleteUserDetails
+	var errorResponse = ErrorResponse{
+		Code: http.StatusInternalServerError, Message: "Internal Server Error.",
+	}
+	bearerToken := request.Header.Get("Authorization")
+	var authorizationToken = strings.Split(bearerToken, " ")[1]
+
+	email, _ := VerifyToken(authorizationToken)
+
+	if email == "" {
+		returnErrorResponse(response, request, errorResponse)
+	} else {
+		collection := Client.Database("msdb").Collection("users")
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var err = collection.FindOne(ctx, bson.M{
+			"email": email,
+		}).Decode(&results)
+
+		defer cancel()
+		fmt.Printf("%v\n", results)
+
+		if err != nil {
+			errorResponse.Message = "User not found"
+			returnErrorResponse(response, request, errorResponse)
+		} else {
+			var successResponse = SuccessResponse{
+				Code:     http.StatusOK,
+				Message:  "Success",
+				Response: results,
+			}
+
+			successJSONResponse, jsonError := json.Marshal(successResponse)
+
+			if jsonError != nil {
+				returnErrorResponse(response, request, errorResponse)
+			}
+			response.Header().Set("Content-Type", "application/json")
+			response.Write(successJSONResponse)
+		}
+
 	}
 }
 

@@ -21,8 +21,9 @@ type SuccessResponse struct {
 
 //Claims mean structure for name email from payload
 type Claims struct {
-	Name  string
-	Email string
+	Name   string
+	Email  string
+	Userid int
 	jwt.StandardClaims
 }
 
@@ -44,6 +45,7 @@ type SuccessfulLoginResponse struct {
 	Name      string
 	Email     string
 	AuthToken string
+	Userid    int `json:"user_id" bson:"user_id"`
 }
 
 //UserDetails structure for user detail
@@ -51,6 +53,14 @@ type UserDetails struct {
 	Name     string
 	Email    string
 	Password string
+	Userid   int `json:"user_id" bson:"user_id"`
+}
+
+//CompleteUserDetails is a completed version of user detail
+type CompleteUserDetails struct {
+	Name   string `json:"name" bson:"name"`
+	Email  string `json:"email" bson:"email"`
+	Userid int    `json:"user_id" bson:"user_id"`
 }
 
 //MasterPart a structure for Master Part Table
