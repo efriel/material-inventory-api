@@ -92,6 +92,22 @@ func GetMasterPart(response http.ResponseWriter, request *http.Request) {
 	}
 
 	o10 := bson.M{
+		"$lookup": bson.M{
+			"localField":   "part.part_id",
+			"from":         "t_stock_view",
+			"foreignField": "mg_id",
+			"as":           "stock",
+		},
+	}
+
+	o11 := bson.M{
+		"$unwind": bson.M{
+			"path":                       "$stock",
+			"preserveNullAndEmptyArrays": true,
+		},
+	}
+
+	o12 := bson.M{
 		"$project": bson.M{
 			"part.part_id":           "$part.part_id",
 			"part.mg_cat_id":         "$part.mg_cat_id",
@@ -109,12 +125,13 @@ func GetMasterPart(response http.ResponseWriter, request *http.Request) {
 			"part.part_notes":        "$part.part_notes",
 			"part.user_id":           "$part.user_id",
 			"user.name":              "$user.name",
+			"stock.quantity":         "$stock.quantity",
 			"part.insert_date":       "$part.insert_date",
 			"part.update_date":       "$part.update_date",
 		},
 	}
 
-	pipeline := bson.A{o1, o2, o3, o4, o5, o6, o7, o8, o9, o10}
+	pipeline := bson.A{o1, o2, o3, o4, o5, o6, o7, o8, o9, o10, o11, o12}
 
 	//pipe := mongo.Pipeline([]bson.A{o1, o2, o3, o4, o5, o6, o7, o8, o9, o10})
 	showInfoCursor, err := collection.Aggregate(ctx, pipeline)
@@ -199,7 +216,7 @@ func CreateMasterPart(response http.ResponseWriter, request *http.Request) {
 
 	decoder := json.NewDecoder(request.Body)
 	decoderErr := decoder.Decode(&NewPart)
-
+	fmt.Println(fmt.Sprintf("%#v", NewPart))
 	defer request.Body.Close()
 
 	if decoderErr != nil {

@@ -81,8 +81,31 @@ type MasterPart struct {
 	Partnotes    string    `json:"part_notes" bson:"part_notes"`
 	Userid       int       `json:"user_id" bson:"user_id"`
 	Username     string    `json:"name" bson:"name"`
+	Stock        int       `json:"quantity" bson:"quantity"`
 	Insertdate   time.Time `json:"insert_date" bson:"insert_date"`
 	Updatedate   time.Time `json:"update_date" bson:"update_date"`
+}
+
+//MasterGoods a structure for Master Finished Goods Table
+type MasterGoods struct {
+	Fgid            string    `json:"fg_id" bson:"fg_id"`
+	Mgcatid         string    `json:"mg_cat_id" bson:"mg_cat_id"`
+	Mgcatname       string    `json:"mg_cat_name" bson:"mg_cat_name"`
+	Fgcode          string    `json:"fg_code" bson:"fg_code"`
+	Fgname          string    `json:"fg_name" bson:"fg_name"`
+	Fgunit          string    `json:"fg_unit" bson:"fg_unit"`
+	Minstock        string    `json:"min_stock" bson:"min_stock"`
+	Costprice       string    `json:"production_cost" bson:"production_cost"`
+	Percentmarkup   string    `json:"percent_markup" bson:"percent_markup"`
+	Percentdiscount string    `json:"percent_discount" bson:"percent_discount"`
+	Netprice        string    `json:"net_price" bson:"net_price"`
+	Expireddate     string    `json:"expired_date" bson:"expired_date"`
+	Siteid          string    `json:"site_id" bson:"site_id"`
+	Fgnotes         string    `json:"fg_notes" bson:"fg_notes"`
+	Userid          int       `json:"user_id" bson:"user_id"`
+	Username        string    `json:"name" bson:"name"`
+	Insertdate      time.Time `json:"insert_date" bson:"insert_date"`
+	Updatedate      time.Time `json:"update_date" bson:"update_date"`
 }
 
 //AgregateMasterPart Pipeline from agregation data master part
@@ -103,26 +126,31 @@ type AgregateMasterPart struct {
 	Partnotes    string    `json:"part_notes" bson:"part_notes"`
 	Userid       int       `json:"user_id" bson:"user_id"`
 	Username     string    `json:"name" bson:"name"`
+	Stock        int       `json:"quantity" bson:"quantity"`
 	Insertdate   time.Time `json:"insert_date" bson:"insert_date"`
 	Updatedate   time.Time `json:"update_date" bson:"update_date"`
 }
 
-//MstFg a structure for Master Finished Goods Table
-type MstFg struct {
-	Fgid            string    `json:"fg_id" bson:"fg_id"`
-	Mgcatid         string    `json:"mg_cat_id" bson:"mg_cat_id"`
-	Fgcode          string    `json:"fg_code" bson:"fg_code"`
+//AgregateMasterGoods a structure for Master Finished Goods Table
+type AgregateMasterGoods struct {
+	Fgid            string    `json:"good.fg_id" bson:"good.fg_id"`
+	Mgcatid         string    `json:"good.mg_cat_id" bson:"good.mg_cat_id"`
+	Mgcatname       string    `json:"category.mg_cat_name" bson:"category.mg_cat_name"`
+	Fgcode          string    `json:"good.fg_code" bson:"good.fg_code"`
 	Fgname          string    `json:"fg_name" bson:"fg_name"`
 	Fgunit          string    `json:"fg_unit" bson:"fg_unit"`
 	Minstock        int       `json:"min_stock" bson:"min_stock"`
-	Productioncost  int       `json:"production_cost" bson:"production_cost"`
+	Costprice       int       `json:"production_cost" bson:"production_cost"`
 	Percentmarkup   int       `json:"percent_markup" bson:"percent_markup"`
 	Percentdiscount int       `json:"percent_discount" bson:"percent_discount"`
 	Netprice        int       `json:"net_price" bson:"net_price"`
 	Expireddate     time.Time `json:"expired_date" bson:"expired_date"`
 	Siteid          string    `json:"site_id" bson:"site_id"`
+	Sitename        string    `json:"site_name" bson:"site_name"`
 	Fgnotes         string    `json:"fg_notes" bson:"fg_notes"`
 	Userid          string    `json:"user_id" bson:"user_id"`
+	Username        string    `json:"name" bson:"name"`
+	Stock           int       `json:"quantity" bson:"quantity"`
 	Insertdate      time.Time `json:"insert_date" bson:"insert_date"`
 	Updatedate      time.Time `json:"update_date" bson:"update_date"`
 }
