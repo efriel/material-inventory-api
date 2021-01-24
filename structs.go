@@ -197,17 +197,67 @@ type TDoc struct {
 
 //TPurchase is a structure for Table Purchase
 type TPurchase struct {
-	Purchaseid   string    `json:"purchase_id" bson:"purchase_id"`
-	Supplierid   string    `json:"supplier_id" bson:"supplier_id"`
-	Partid       string    `json:"part_id" bson:"part_id"`
-	Qty          int       `json:"qty" bson:"qty"`
-	Purchasedate time.Time `json:"purchase_date" bson:"purchase_date"`
-	Invoice      string    `json:"invoice" bson:"invoice"`
-	Receipt      string    `json:"receipt" bson:"receipt"`
-	Userid       string    `json:"user_id" bson:"user_id"`
-	Statusflag   string    `json:"status_flag" bson:"status_flag"`
-	Insertdate   time.Time `json:"insert_date" bson:"insert_date"`
-	Updatedate   time.Time `json:"update_date" bson:"update_date"`
+	Purchaseid    string    `json:"purchase_id" bson:"purchase_id"`
+	Supplierid    string    `json:"supplier_id" bson:"supplier_id"`
+	Whid          string    `json:"wh_id" bson:"wh_id"`
+	Partid        string    `json:"part_id" bson:"part_id"`
+	Qty           string    `json:"qty" bson:"qty"`
+	Purchasedate  time.Time `json:"purchase_date" bson:"purchase_date"`
+	Estimatedcost string    `json:"estimated_cost" bson:"estimated_cost"`
+	Invoice       string    `json:"invoice" bson:"invoice"`
+	Receipt       string    `json:"receipt" bson:"receipt"`
+	Buyerid       int       `json:"buyer_id" bson:"buyer_id"`
+	Originatorid  int       `json:"originator_id" bson:"originator_id"`
+	Userid        int       `json:"user_id" bson:"user_id"`
+	Notes         string    `json:"notes" bson:"notes"`
+	Statusflag    string    `json:"status_flag" bson:"status_flag"`
+	Bidoutdate    time.Time `json:"bidout_date" bson:"bidout_date"`
+	Closeddate    time.Time `json:"closed_date" bson:"closed_date"`
+	Insertdate    time.Time `json:"insert_date" bson:"insert_date"`
+	Updatedate    time.Time `json:"update_date" bson:"update_date"`
+}
+
+//TPurchaseView is a structure for Table Purchase View
+type TPurchaseView struct {
+	Purchaseid     string    `json:"purchase_id" bson:"purchase_id"`
+	Supplierid     string    `json:"purchase.supplier_id" bson:"purchase.supplier_id"`
+	Suppliername   string    `json:"supplier.supplier_name" bson:"supplier.supplier_name"`
+	Whid           string    `json:"warehouse.wh_id" bson:"warehouse.wh_id"`
+	Whname         string    `json:"warehouse.wh_name" bson:"warehouse.wh_name"`
+	Partid         string    `json:"purchase.part_id" bson:"purchase.part_id"`
+	Partname       string    `json:"part.part_name" bson:"part.part_name"`
+	Qty            int       `json:"purchase.qty" bson:"purchase.qty"`
+	Stock          int       `json:"stock.quantity" bson:"stock.quantity"`
+	Purchasedate   time.Time `json:"purchase.purchase_date" bson:"purchase.purchase_date"`
+	Estimatedcost  int       `json:"supplier.estimated_cost" bson:"supplier.estimated_cost"`
+	Invoiceid      string    `json:"purchase.invoice" bson:"purchase.invoice"`
+	Invoicefile    string    `json:"docinvoice.file_name	" bson:"docinvoice.file_name"`
+	Receiptid      string    `json:"purchase.receipt	" bson:"purchase.receipt"`
+	Receiptfile    string    `json:"docreceipt.file_name	" bson:"docreceipt.file_name"`
+	Buyerid        string    `json:"purchase.buyer_id	" bson:"purchase.buyer_id"`
+	Buyername      string    `json:"buyer.name	" bson:"buyer.name"`
+	Originatorid   string    `json:"purchase.originator_id	" bson:"purchase.originator_id"`
+	Originatorname string    `json:"originator.name	" bson:"originator.name"`
+	Userid         string    `json:"purchase.user_id" bson:"purchase.user_id"`
+	Username       string    `json:"user.name" bson:"user.name"`
+	Notes          string    `json:"purchase.notes" bson:"purchase.notes"`
+	Statusflag     string    `json:"purchase.status_flag" bson:"purchase.status_flag"`
+	StatusName     string    `json:"status.status_name" bson:"status.status_name"`
+	Bidoutdate     time.Time `json:"purchase.bidout_date" bson:"purchase.bidout_date"`
+	Closeddate     time.Time `json:"purchase.closed_date" bson:"purchase.closed_date"`
+	Insertdate     time.Time `json:"purchase.insert_date" bson:"purchase.insert_date"`
+	Updatedate     time.Time `json:"purchase.update_date" bson:"purchase.update_date"`
+}
+
+//TPurchaseViewTest is a structure for Table Purchase View
+type TPurchaseViewTest struct {
+	TPurchasePart struct {
+	} `json:"part" bson:"part"`
+}
+
+//TPurchasePart is a structure for Table Purchasepart View
+type TPurchasePart struct {
+	Partname string `json:"part_name" bson:"part_name"`
 }
 
 //TSales is a struct for Table Sales

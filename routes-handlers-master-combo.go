@@ -188,3 +188,75 @@ func GetDocs(response http.ResponseWriter, request *http.Request) {
 	}
 
 }
+
+//GetParts to get list of part
+func GetParts(response http.ResponseWriter, request *http.Request) {
+	//var results TDoc
+	var errorResponse = ErrorResponse{
+		Code: http.StatusInternalServerError, Message: "Internal Server Error.",
+	}
+
+	collection := Client.Database("msdb").Collection("t_mst_part")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := collection.Find(ctx, bson.M{})
+	var results []bson.M
+	err = cursor.All(ctx, &results)
+
+	defer cancel()
+
+	if err != nil {
+		errorResponse.Message = "Document not found"
+		returnErrorResponse(response, request, errorResponse)
+	} else {
+		var successResponse = SuccessResponse{
+			Code:     http.StatusOK,
+			Message:  "Success",
+			Response: results,
+		}
+
+		successJSONResponse, jsonError := json.Marshal(successResponse)
+
+		if jsonError != nil {
+			returnErrorResponse(response, request, errorResponse)
+		}
+		response.Header().Set("Content-Type", "application/json")
+		response.Write(successJSONResponse)
+	}
+
+}
+
+//GetUsers to get list of User
+func GetUsers(response http.ResponseWriter, request *http.Request) {
+	//var results TDoc
+	var errorResponse = ErrorResponse{
+		Code: http.StatusInternalServerError, Message: "Internal Server Error.",
+	}
+
+	collection := Client.Database("msdb").Collection("users")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	cursor, err := collection.Find(ctx, bson.M{})
+	var results []bson.M
+	err = cursor.All(ctx, &results)
+
+	defer cancel()
+
+	if err != nil {
+		errorResponse.Message = "Document not found"
+		returnErrorResponse(response, request, errorResponse)
+	} else {
+		var successResponse = SuccessResponse{
+			Code:     http.StatusOK,
+			Message:  "Success",
+			Response: results,
+		}
+
+		successJSONResponse, jsonError := json.Marshal(successResponse)
+
+		if jsonError != nil {
+			returnErrorResponse(response, request, errorResponse)
+		}
+		response.Header().Set("Content-Type", "application/json")
+		response.Write(successJSONResponse)
+	}
+
+}
