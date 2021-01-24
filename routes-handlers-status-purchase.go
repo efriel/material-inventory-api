@@ -4,8 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"net/smtp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -268,7 +271,12 @@ func UpdatePurchase(response http.ResponseWriter, request *http.Request) {
 			} else {
 				if NewPurchase.Statusflag == "D" {
 					newQty, _ := strconv.Atoi(NewPurchase.Qty)
-					InsertStock(NewPurchase.Partid, newQty)
+					partid := NewPurchase.Partid
+					qty := NewPurchase.Qty
+					InsertStock(partid, newQty)
+					getUserAndEmail(NewPurchase.Buyerid, partid, qty)
+					getUserAndEmail(NewPurchase.Originatorid, partid, qty)
+					getUserAndEmail(NewPurchase.Userid, partid, qty)
 				}
 				var successResponse = SuccessResponse{
 					Code:     http.StatusOK,
@@ -319,4 +327,52 @@ func InsertStock(Mgid string, Qty int) {
 	if databaseErr != nil {
 
 	}
+}
+
+func getUserAndEmail(userid int, partid string, qty string) error {
+	var resUserDetails UserDetails
+	collection := Client.Database("msdb").Collection("users")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	var err = collection.FindOne(ctx, bson.M{
+		"user_id": userid,
+	}).Decode(&resUserDetails)
+	defer cancel()
+	Email := resUserDetails.Email
+	Part := "Part ID: " + partid
+	Qty := qty
+	to := []string{Email}
+	cc := []string{"efriel.apps@gmail.com"}
+	subject := "Penambahan Stock"
+	message := "Dengan Hormat, Ini adalah penambahan stock " + Part + " Sebanyak " + Qty + ", Terimakasih"
+	err2 := sendMail(to, cc, subject, message)
+	if err2 != nil {
+		log.Fatal(err.Error())
+	}
+	log.Println("Mail sent!")
+	return nil
+}
+
+func sendMail(to []string, cc []string, subject, message string) error {
+	CfgSMTPHost := "smtp.gmail.com"
+	CfgSMTPPort := 587
+	CfgSenderName := "MIS System"
+	CfgAuthEmail := "efriel.apps@gmail.com"
+	CfgAuthPwd := "CapitalGainApps!"
+
+	body := "From: " + CfgSenderName + "\n" +
+		"To: " + strings.Join(to, ",") + "\n" +
+		"Cc: " + strings.Join(cc, ",") + "\n" +
+		"Subject: " + subject + "\n\n" +
+		message
+
+	auth := smtp.PlainAuth("", CfgAuthEmail, CfgAuthPwd, CfgSMTPHost)
+	smtpAddr := fmt.Sprintf("%s:%d", CfgSMTPHost, CfgSMTPPort)
+
+	err := smtp.SendMail(smtpAddr, auth, CfgAuthEmail, append(to, cc...), []byte(body))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
