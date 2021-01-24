@@ -266,6 +266,10 @@ func UpdatePurchase(response http.ResponseWriter, request *http.Request) {
 				errorResponse.Message = "Document not found"
 				returnErrorResponse(response, request, errorResponse)
 			} else {
+				if NewPurchase.Statusflag == "D" {
+					newQty, _ := strconv.Atoi(NewPurchase.Qty)
+					InsertStock(NewPurchase.Partid, newQty)
+				}
 				var successResponse = SuccessResponse{
 					Code:     http.StatusOK,
 					Message:  "Success",
@@ -281,5 +285,38 @@ func UpdatePurchase(response http.ResponseWriter, request *http.Request) {
 				response.Write(successJSONResponse)
 			}
 		}
+	}
+}
+
+//InsertStock function to update new stock value
+func InsertStock(Mgid string, Qty int) {
+	var NewStock TStock
+
+	tnow := time.Now()
+	tsec := tnow.Unix()
+	ntsec := strconv.FormatInt(tsec, 10)
+	Stockid := ntsec
+
+	collection := Client.Database("msdb").Collection("t_stock")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	NewStock = TStock{
+		Stockid:    Stockid,
+		Mgid:       Mgid,
+		Quantity:   Qty,
+		Insertdate: time.Now(),
+		Updatedate: time.Now(),
+	}
+
+	_, databaseErr := collection.InsertOne(ctx, bson.M{
+		"stock_id":    NewStock.Stockid,
+		"mg_id":       NewStock.Mgid,
+		"quantity":    NewStock.Quantity,
+		"insert_date": NewStock.Insertdate,
+		"update_date": NewStock.Updatedate,
+	})
+	defer cancel()
+
+	if databaseErr != nil {
+
 	}
 }
