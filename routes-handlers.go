@@ -32,8 +32,8 @@ func RenderRegister(response http.ResponseWriter, request *http.Request) {
 //SignInUser to accept request from user login
 func SignInUser(response http.ResponseWriter, request *http.Request) {
 	//Allow CORS here By * or specific origin
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	response.Header().Set("Access-Control-Allow-Origin", "*")
+	response.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var loginRequest LoginParams
 	var result UserDetails
 	var errorResponse = ErrorResponse{
@@ -112,8 +112,8 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 //SignUpUser to accept request from user signup
 func SignUpUser(response http.ResponseWriter, request *http.Request) {
 	//Allow CORS here By * or specific origin
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	response.Header().Set("Access-Control-Allow-Origin", "*")
+	response.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var registrationRequest RegistrationParams
 	var errorResponse = ErrorResponse{
 		Code: http.StatusInternalServerError, Message: "Internal Server Error.",
