@@ -9,9 +9,6 @@ import (
 // AddApproutes is to handle all routes coming from the http request
 func AddApproutes(route *mux.Router) {
 	log.Println("Loadeding Routes...")
-	route.HandleFunc("/signin", SignInUser).Methods("POST")
-	route.HandleFunc("/signup", SignUpUser).Methods("POST")
-	route.HandleFunc("/userdetails", GetUserDetails).Methods("GET")
 	route.HandleFunc("/api/signin", SignInUser).Methods("POST", "OPTIONS")
 	route.HandleFunc("/api/signup", SignUpUser).Methods("POST", "OPTIONS")
 	route.HandleFunc("/api/userdetails", GetUserDetails).Methods("GET")

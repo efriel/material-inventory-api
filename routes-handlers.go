@@ -116,10 +116,8 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 func SignUpUser(response http.ResponseWriter, request *http.Request) {
 	//Allow CORS here By * or specific origin
 	response.Header().Set("Access-Control-Allow-Origin", "*")
-	if request.Method == "OPTIONS" {
-		response.Header().Set("Access-Control-Allow-Headers", "Authorization")
-		response.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	}
+	response.Header().Set("Access-Control-Allow-Headers", "Authorization")
+	response.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var registrationRequest RegistrationParams
 	var errorResponse = ErrorResponse{
 		Code: http.StatusInternalServerError, Message: "Internal Server Error.",
