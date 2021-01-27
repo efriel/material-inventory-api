@@ -45,7 +45,7 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 
 	decoder := json.NewDecoder(request.Body)
 	decoderErr := decoder.Decode(&loginRequest)
-
+	fmt.Println(fmt.Sprintf("%#v", loginRequest))
 	defer request.Body.Close()
 
 	if decoderErr != nil {
@@ -122,7 +122,6 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 	var errorResponse = ErrorResponse{
 		Code: http.StatusInternalServerError, Message: "Internal Server Error.",
 	}
-
 	decoder := json.NewDecoder(request.Body)
 	decoderErr := decoder.Decode(&registrationRequest)
 	defer request.Body.Close()
