@@ -147,7 +147,7 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 			collection := Client.Database("msdb").Collection("users")
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			_, databaseErr := collection.InsertOne(ctx, bson.M{
-				"user_id":  ntsec,
+				"user_id":  ntsecint,
 				"email":    registrationRequest.Email,
 				"password": getHash([]byte(registrationRequest.Password)),
 				"name":     registrationRequest.Name,
