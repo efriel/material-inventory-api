@@ -31,12 +31,6 @@ func RenderRegister(response http.ResponseWriter, request *http.Request) {
 
 //SignInUser to accept request from user login
 func SignInUser(response http.ResponseWriter, request *http.Request) {
-	//Allow CORS here By * or specific origin
-	response.Header().Set("Access-Control-Allow-Origin", "*")
-	if request.Method == "OPTIONS" {
-		response.Header().Set("Access-Control-Allow-Headers", "Authorization")
-		response.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	}
 	var loginRequest LoginParams
 	var result UserDetails
 	var errorResponse = ErrorResponse{
@@ -63,18 +57,14 @@ func SignInUser(response http.ResponseWriter, request *http.Request) {
 
 			collection := Client.Database("msdb").Collection("users")
 
-			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			var err = collection.FindOne(ctx, bson.M{
 				"email": loginRequest.Email,
 			}).Decode(&result)
-			if err != nil {
-				errorResponse.Message = "User not found"
-				returnErrorResponse(response, request, errorResponse)
-			}
-
 			defer cancel()
 
 			if err != nil {
+				errorResponse.Message = "User not found"
 				returnErrorResponse(response, request, errorResponse)
 			} else {
 				pwdmatch := CheckPasswordHash(loginRequest.Password, result.Password)
@@ -155,7 +145,7 @@ func SignUpUser(response http.ResponseWriter, request *http.Request) {
 			}
 
 			collection := Client.Database("msdb").Collection("users")
-			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			_, databaseErr := collection.InsertOne(ctx, bson.M{
 				"user_id":  ntsec,
 				"email":    registrationRequest.Email,
@@ -286,10 +276,6 @@ func returnErrorResponse(response http.ResponseWriter, request *http.Request, er
 	response.Write(jsonResponse)
 }
 
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-}
-
 func getHash(pwd []byte) string {
 	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {
@@ -298,7 +284,6 @@ func getHash(pwd []byte) string {
 	return string(hash)
 }
 
-//CheckPasswordHash to compare the password given
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
